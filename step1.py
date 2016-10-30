@@ -81,23 +81,25 @@ def main():
     #     print(''.join(l))
 
 # generate files
-    # with open('sequences.fa', 'w') as f:
-    #     f.write('>SEQUENCES\n')
-    #     for l in sequence_list:
-    #         f.write(''.join(l) + '\n')
+    with open('sequences.fa', 'w') as f:
+        f.write('>SEQUENCES\n')
+        for l in sequence_list:
+            f.write(''.join(l) + '\n')
 
-    # with open('sites.txt', 'w') as f:
-    #     for x in plant_site_list:
-    #         f.write(str(x) + '\n')
+    with open('sites.txt', 'w') as f:
+        for x in plant_site_list:
+            f.write(str(x) + '\n')
     
-    # with open('motif.txt', 'w') as f:
-    #     f.write('>MOTIF1 ' + str(ml) + '\n')
-    #     for l in pwm:
-    #         f.write(''.join(str(l)) + '\n')
-    #     f.write('<')
+    with open('motif.txt', 'w') as f:
+        f.write('>MOTIF1 ' + str(ml) + '\n')
+        for l in pwm:
+            for s in l:
+                f.write(str(s) + ' ')
+            f.write('\n')
+        f.write('<')
     
-    # with open('motiflength.txt', 'w') as f:
-    #     f.write(str(ml))
+    with open('motiflength.txt', 'w') as f:
+        f.write(str(ml))
 
 if __name__ == '__main__':
     start_time = time.time()
