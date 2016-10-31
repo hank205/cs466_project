@@ -1,5 +1,7 @@
 # CS466 Mini Project (Bioinformatics)
 # Edward, Hank, William
+# Step 1
+
 from __future__ import print_function
 import numpy as np
 import sys
