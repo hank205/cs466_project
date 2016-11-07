@@ -137,11 +137,12 @@ def main():
     with open('predictedsites.txt', 'w') as f:
         for l in curr_position_list:
             f.write(str(l) + '\n')
-    
 
-    
 
 if __name__ == '__main__':
     start_time = time.time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    runtime = (time.time() - start_time)
+    with open('runtime.txt', 'w') as f:
+        f.write(str(runtime))
+    print("--- %s seconds ---" % runtime)
