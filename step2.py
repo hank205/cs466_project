@@ -5,14 +5,15 @@
 import numpy as np
 import sys
 import time
+import os
 
 # Seed
 np.random.seed(seed=1)
 base_list = ['A', 'C', 'G', 'T']
 
-def read_sequence_file():
+def read_sequence_file(num):
     sequence_list = []
-    f = open('./data_sets/%s/sequences.fa' % data_folder, 'r')
+    f = open('./data_sets/{}/{}/sequences.fa'.format(data_folder, str(num)), 'r')
     for i, line in enumerate(f):
         if i == 0:
             continue
@@ -102,47 +103,58 @@ def main():
     global data_folder, sequence_list, ml
     data_folder = sys.argv[1]
   
-    # set up background matrix
-    with open('./data_sets/%s/motiflength.txt' % data_folder, 'r') as f:
-        ml = int(f.read())
-    
-    # Read sequence file and run Gibbs sampler.
-    sequence_list = read_sequence_file()
-    curr_position_list = gibbs()
+
+    if not os.path.exists('outcomes/{}'.format(data_folder)):
+        os.makedirs('outcomes/{}'.format(data_folder))
+
+    for num in range(10):
+        run_start = time.time()
+
+        # set up background matrix
+        with open('./data_sets/{}/{}/motiflength.txt'.format(data_folder, str(num)), 'r') as f:
+            ml = int(f.read())
+
+        # Read sequence file and run Gibbs sampler.
+        sequence_list = read_sequence_file(num)
+        curr_position_list = gibbs()
 
 
-    # Make PWM predictedmotif out of the curr_position_list
-    predictedmotif = [[0.0, 0.0, 0.0, 0.0] for x in range(ml)]
-    for i in range(len(curr_position_list)):        
-        start_pos = curr_position_list[i]
-        motif = sequence_list[i][start_pos:start_pos+ml]
-        for j in range(ml):
-            char = motif[j]
-            predictedmotif[j][base_list.index(char)] += 1
-    
-    # Normalize predictedmotif
-    sc = len(sequence_list)
-    for i in range(ml):
-        predictedmotif[i] = map(lambda x: x/sc, predictedmotif[i])
+        # Make PWM predictedmotif out of the curr_position_list
+        predictedmotif = [[0.0, 0.0, 0.0, 0.0] for x in range(ml)]
+        for i in range(len(curr_position_list)):        
+            start_pos = curr_position_list[i]
+            motif = sequence_list[i][start_pos:start_pos+ml]
+            for j in range(ml):
+                char = motif[j]
+                predictedmotif[j][base_list.index(char)] += 1
+        
+        # Normalize predictedmotif
+        sc = len(sequence_list)
+        for i in range(ml):
+            predictedmotif[i] = map(lambda x: x/sc, predictedmotif[i])
 
-    # Generate files
-    with open('predictedmotif.txt', 'w') as f:
-        f.write('>MOTIF ' + str(ml) + ' ' + data_folder + '\n')
-        for l in predictedmotif:
-            for s in l:
-                f.write(str(s) + ' ')
-            f.write('\n')
-        f.write('<')
+        # Generate files
+        if not os.path.exists('outcomes/{}/{}'.format(data_folder, str(num))):
+            os.makedirs('outcomes/{}/{}'.format(data_folder, str(num)))
 
-    with open('predictedsites.txt', 'w') as f:
-        for l in curr_position_list:
-            f.write(str(l) + '\n')
+        with open('outcomes/{}/{}/predictedmotif.txt'.format(data_folder, str(num)), 'w') as f:
+            f.write('>MOTIF ' + str(ml) + ' ' + data_folder + '\n')
+            for l in predictedmotif:
+                for s in l:
+                    f.write(str(s) + ' ')
+                f.write('\n')
+            f.write('<')
+
+        with open('outcomes/{}/{}/predictedsites.txt'.format(data_folder, str(num)), 'w') as f:
+            for l in curr_position_list:
+                f.write(str(l) + '\n')
+
+        runtime = (time.time() - run_start)
+        with open('outcomes/{}/{}/runtime.txt'.format(data_folder, str(num)), 'w') as f:
+            f.write(str(runtime))
 
 
 if __name__ == '__main__':
     start_time = time.time()
     main()
-    runtime = (time.time() - start_time)
-    with open('runtime.txt', 'w') as f:
-        f.write(str(runtime))
-    print("--- %s seconds ---" % runtime)
+    print("--- %s seconds ---" % (time.time() - start_time))

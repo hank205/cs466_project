@@ -6,6 +6,7 @@ from __future__ import print_function
 import numpy as np
 import sys
 import time
+import os
 
 base_list = ['A', 'C', 'G', 'T']
 # Key: icpc -> (float). Value: p -> (float). To be used for generate_motif()
@@ -59,12 +60,14 @@ def plant_binding_sites(sequence_list, pwm):
     return plant_site_list
 
 def main():
-    if len(sys.argv) != 5:
-      print('Usage: python %s ICPC ML SL SC' % (sys.argv[0]))
+    if len(sys.argv) != 6:
+      print('Usage: python %s ICPC ML SL SC data_folder' % (sys.argv[0]))
       exit()
     global icpc, ml, sl, sc
     icpc = float(sys.argv[1])
-    ml, sl, sc = map(int, sys.argv[2:])
+    ml, sl, sc = map(int, sys.argv[2:-1])
+    data_folder = sys.argv[-1]
+    # print (ml, sl, sc,data_folder)
   
     sequence_list = generate_random_sequences()
     pwm = generate_motif()
@@ -82,26 +85,36 @@ def main():
     # for l in sequence_list:
     #     print(''.join(l))
 
-# generate files
-    with open('sequences.fa', 'w') as f:
-        f.write('>SEQUENCES\n')
-        for l in sequence_list:
-            f.write(''.join(l) + '\n')
+    if not os.path.exists('./data_sets'):
+        os.makedirs('./data_sets')
 
-    with open('sites.txt', 'w') as f:
-        for x in plant_site_list:
-            f.write(str(x) + '\n')
-    
-    with open('motif.txt', 'w') as f:
-        f.write('>MOTIF1 ' + str(ml) + '\n')
-        for l in pwm:
-            for s in l:
-                f.write(str(s) + ' ')
-            f.write('\n')
-        f.write('<')
-    
-    with open('motiflength.txt', 'w') as f:
-        f.write(str(ml))
+    if not os.path.exists('./data_sets/{}'.format(data_folder)):
+        os.makedirs('./data_sets/{}'.format(data_folder))
+
+    # generate 10 data sets for input configuration
+    for num in range(10):
+        if not os.path.exists('./data_sets/{}/{}'.format(data_folder, str(num))):
+            os.makedirs('./data_sets/{}/{}'.format(data_folder, str(num)))
+        # generate files
+        with open('./data_sets/{}/{}/sequences.fa'.format(data_folder, str(num)), 'w') as f:
+            f.write('>SEQUENCES\n')
+            for l in sequence_list:
+                f.write(''.join(l) + '\n')
+
+        with open('./data_sets/{}/{}/sites.txt'.format(data_folder, str(num)), 'w') as f:
+            for x in plant_site_list:
+                f.write(str(x) + '\n')
+        
+        with open('./data_sets/{}/{}/motif.txt'.format(data_folder, str(num)), 'w') as f:
+            f.write('>MOTIF1 ' + str(ml) + '\n')
+            for l in pwm:
+                for s in l:
+                    f.write(str(s) + ' ')
+                f.write('\n')
+            f.write('<')
+        
+        with open('./data_sets/{}/{}/motiflength.txt'.format(data_folder, str(num)), 'w') as f:
+            f.write(str(ml))
 
 if __name__ == '__main__':
     start_time = time.time()
