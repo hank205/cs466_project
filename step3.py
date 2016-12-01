@@ -92,13 +92,13 @@ def num_overlaps(sites, predictedsites, motif_lengths, key, num):
     return overlap_sites
 
 
-def read_motifs(num, filepath):
+def read_motifs(num):
     '''
     read the 7 motifs of the num'th dataset
     '''
     motifs = {}
     for data_folder in dirs:
-        with open(filepath, 'r') as f:
+        with open('./data_sets/{}/{}/motif.txt'.format(data_folder, str(num)), 'r') as f:
             motifs[data_folder] = []
 
             for i, line in enumerate(f):
@@ -116,6 +116,32 @@ def read_motifs(num, filepath):
 
                 motifs[data_folder].append(l)
     return motifs
+
+def read_predictedmotifs(num):
+    '''
+    read the 7 predicted motifs of the num'th dataset
+    '''
+    predictedmotifs = {}
+    for data_folder in dirs:
+        with open('./outcomes/{}/{}/predictedmotif.txt'.format(data_folder, str(num)), 'r') as f:
+            predictedmotifs[data_folder] = []
+
+            for i, line in enumerate(f):
+                if i == 0:
+                    continue
+                if line == '<':
+                    continue
+                
+                data = line.split()
+                l = []
+                l.append(float(data[0]))
+                l.append(float(data[1]))
+                l.append(float(data[2]))
+                l.append(float(data[3]))
+
+                predictedmotifs[data_folder].append(l)
+    return predictedmotifs
+
 
 
 
@@ -403,8 +429,8 @@ def main():
             os.makedirs('./evaluations/{}'.format(str(num)))
 
         # evaluate relative_entropy
-        motifs = read_motifs(num, './data_sets/{}/{}/motif.txt'.format(data_folder, str(num)))
-        predictedmotifs = read_motifs(num, './outcomes/{}/{}/predictedmotif.txt'.format(data_folder, str(num)))
+        motifs = read_motifs(num)
+        predictedmotifs = read_predictedmotifs(num)
         # for key in dirs:
         #     print key
         #     for l in motif[key]:

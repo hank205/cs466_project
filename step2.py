@@ -138,7 +138,8 @@ def main():
             os.makedirs('outcomes/{}/{}'.format(data_folder, str(num)))
 
         with open('outcomes/{}/{}/predictedmotif.txt'.format(data_folder, str(num)), 'w') as f:
-            f.write('>MOTIF ' + str(ml) + ' ' + data_folder + '\n')
+            # f.write('>MOTIF ' + str(ml) + ' ' + data_folder + '\n')
+            f.write('>MOTIF ' + str(ml) + '\n')
             for l in predictedmotif:
                 for s in l:
                     f.write(str(s) + ' ')
