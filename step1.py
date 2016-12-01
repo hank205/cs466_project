@@ -69,15 +69,14 @@ def main():
     data_folder = sys.argv[-1]
     # print (ml, sl, sc,data_folder)
   
-    sequence_list = generate_random_sequences()
-    pwm = generate_motif()
+    
     # print('original sequence_list:')
     # for l in sequence_list:
     #     print(''.join(l))
     # print('pwm:')    
     # for l in pwm:
     #     print(l)        
-    plant_site_list = plant_binding_sites(sequence_list, pwm)
+    
     # print('plant site indices:')
     # for i in plant_site_list:
     #     print(''.join(str(i)))
@@ -93,6 +92,10 @@ def main():
 
     # generate 10 data sets for input configuration
     for num in range(10):
+        sequence_list = generate_random_sequences()
+        pwm = generate_motif()
+        plant_site_list = plant_binding_sites(sequence_list, pwm)
+
         if not os.path.exists('./data_sets/{}/{}'.format(data_folder, str(num))):
             os.makedirs('./data_sets/{}/{}'.format(data_folder, str(num)))
         # generate files
