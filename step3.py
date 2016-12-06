@@ -12,10 +12,14 @@ def relative_entropy(motif, predictedmotif, key):
     relative_entropy = 0
     whitening_factor = 0.00001
 
-    for l in range(len(motif[key])):
-        for x in range(4):
-            P = float(motif[key][l][x])
-            Q = float(predictedmotif[key][l][x])
+    for row in range(len(motif[key])):
+        for col in range(4):
+            # print(motif)
+            # print(key, motif[key])
+            # print(key, row, motif[key][row])
+            # print()
+            P = float(motif[key][row][col])
+            Q = float(predictedmotif[key][row][col])
             relative_entropy += P * math.log((P+whitening_factor)/(Q+whitening_factor), 2)
 
     return relative_entropy
@@ -193,15 +197,15 @@ def evaluate_relative_entropy(motifs, predictedmotifs, num):
     #     print (rel_entropy[data_folder], end=' ')
     # print()
 
-def evaluate_avg_relative_entropy():
+def evaluate_avg_relative_entropy(num):
     '''
     evaluate average relative_entropy of the 10 datasets
     '''
     global tot_rel_entropy
 
-    plt.plot(1, tot_rel_entropy['a_icpc1']/10, 'ro')
-    plt.plot(1.5,tot_rel_entropy['a_icpc1.5']/10, 'ro')
-    plt.plot(2, tot_rel_entropy['default']/10, 'ro')
+    plt.plot(1, tot_rel_entropy['a_icpc1']/num, 'ro')
+    plt.plot(1.5,tot_rel_entropy['a_icpc1.5']/num, 'ro')
+    plt.plot(2, tot_rel_entropy['default']/num, 'ro')
     plt.axis([0, 3.0, 0.0, 100.0])
     plt.ylabel("relative entropy")
     plt.xlabel("icpc")
@@ -209,9 +213,9 @@ def evaluate_avg_relative_entropy():
     plt.savefig('./evaluations/avg_relative_entropy_vs_icpc.png', bbox_inches='tight')
 
     plt.figure()
-    plt.plot(6, tot_rel_entropy['b_ml6']/10, 'ro')
-    plt.plot(7,tot_rel_entropy['b_ml7']/10, 'ro')
-    plt.plot(8, tot_rel_entropy['default']/10, 'ro')
+    plt.plot(6, tot_rel_entropy['b_ml6']/num, 'ro')
+    plt.plot(7,tot_rel_entropy['b_ml7']/num, 'ro')
+    plt.plot(8, tot_rel_entropy['default']/num, 'ro')
     plt.axis([0, 15.0, 0.0, 100.0])
     plt.ylabel("relative entropy")
     plt.xlabel("ml")
@@ -219,9 +223,9 @@ def evaluate_avg_relative_entropy():
     plt.savefig('./evaluations/avg_relative_entropy_vs_ml.png', bbox_inches='tight')
 
     plt.figure()
-    plt.plot(5, tot_rel_entropy['c_sc5']/10, 'ro')
-    plt.plot(20,tot_rel_entropy['c_sc20']/10, 'ro')
-    plt.plot(10, tot_rel_entropy['default']/10, 'ro')
+    plt.plot(5, tot_rel_entropy['c_sc5']/num, 'ro')
+    plt.plot(20,tot_rel_entropy['c_sc20']/num, 'ro')
+    plt.plot(10, tot_rel_entropy['default']/num, 'ro')
     plt.axis([0, 25.0, 0.0, 150.0])
     plt.ylabel("relative entropy")
     plt.xlabel("sc")
@@ -283,16 +287,16 @@ def evaluate_overlaps(sites, predictedsites, motif_lengths, num):
     #     print (overlaps[data_folder], end=' ')
     # print()
 
-def evaluate_avg_overlaps():
+def evaluate_avg_overlaps(num):
     '''
     evaluate average overlaps
     '''
     global tot_overlaps
 
     plt.figure()
-    plt.plot(1, tot_overlaps['a_icpc1']/10, 'ro')
-    plt.plot(1.5,tot_overlaps['a_icpc1.5']/10, 'ro')
-    plt.plot(2, tot_overlaps['default']/10, 'ro')
+    plt.plot(1, tot_overlaps['a_icpc1']/num, 'ro')
+    plt.plot(1.5,tot_overlaps['a_icpc1.5']/num, 'ro')
+    plt.plot(2, tot_overlaps['default']/num, 'ro')
     plt.axis([0, 3.0, 0.0, 15.0])
     plt.ylabel("overlaps")
     plt.xlabel("icpc")
@@ -300,9 +304,9 @@ def evaluate_avg_overlaps():
     plt.savefig('./evaluations/avg_overlaps_vs_icpc.png', bbox_inches='tight')
 
     plt.figure()
-    plt.plot(6, tot_overlaps['b_ml6']/10, 'ro')
-    plt.plot(7,tot_overlaps['b_ml7']/10, 'ro')
-    plt.plot(8, tot_overlaps['default']/10, 'ro')
+    plt.plot(6, tot_overlaps['b_ml6']/num, 'ro')
+    plt.plot(7,tot_overlaps['b_ml7']/num, 'ro')
+    plt.plot(8, tot_overlaps['default']/num, 'ro')
     plt.axis([0, 15.0, 0.0, 15.0])
     plt.ylabel("overlaps")
     plt.xlabel("ml")
@@ -310,9 +314,9 @@ def evaluate_avg_overlaps():
     plt.savefig('./evaluations/avg_overlaps_vs_ml.png', bbox_inches='tight')
 
     plt.figure()
-    plt.plot(5, tot_overlaps['c_sc5']/10, 'ro')
-    plt.plot(20,tot_overlaps['c_sc20']/10, 'ro')
-    plt.plot(10, tot_overlaps['default']/10, 'ro')
+    plt.plot(5, tot_overlaps['c_sc5']/num, 'ro')
+    plt.plot(20,tot_overlaps['c_sc20']/num, 'ro')
+    plt.plot(10, tot_overlaps['default']/num, 'ro')
     plt.axis([0, 25.0, 0.0, 25.0])
     plt.ylabel("overlaps")
     plt.xlabel("sc")
@@ -365,16 +369,16 @@ def evaluate_runtime(runtime, num):
     # print()
 
 
-def evaluate_avg_runtime():
+def evaluate_avg_runtime(num):
     '''
     evaluate average runtime
     '''
     global tot_runtime
 
     plt.figure()
-    plt.plot(1, tot_runtime['a_icpc1']/10, 'ro')
-    plt.plot(1.5,tot_runtime['a_icpc1.5']/10, 'ro')
-    plt.plot(2, tot_runtime['default']/10, 'ro')
+    plt.plot(1, tot_runtime['a_icpc1']/num, 'ro')
+    plt.plot(1.5,tot_runtime['a_icpc1.5']/num, 'ro')
+    plt.plot(2, tot_runtime['default']/num, 'ro')
     plt.axis([0, 3.0, 0.0, 1.0])
     plt.ylabel("runtime")
     plt.xlabel("icpc")
@@ -382,9 +386,9 @@ def evaluate_avg_runtime():
     plt.savefig('./evaluations/avg_runtime_vs_icpc.png', bbox_inches='tight')
 
     plt.figure()
-    plt.plot(6, tot_runtime['b_ml6']/10, 'ro')
-    plt.plot(7,tot_runtime['b_ml7']/10, 'ro')
-    plt.plot(8, tot_runtime['default']/10, 'ro')
+    plt.plot(6, tot_runtime['b_ml6']/num, 'ro')
+    plt.plot(7,tot_runtime['b_ml7']/num, 'ro')
+    plt.plot(8, tot_runtime['default']/num, 'ro')
     plt.axis([0, 15.0, 0.0, 1.0])
     plt.ylabel("runtime")
     plt.xlabel("ml")
@@ -392,9 +396,9 @@ def evaluate_avg_runtime():
     plt.savefig('./evaluations/avg_runtime_vs_ml.png', bbox_inches='tight')
 
     plt.figure()
-    plt.plot(5, tot_runtime['c_sc5']/10, 'ro')
-    plt.plot(20,tot_runtime['c_sc20']/10, 'ro')
-    plt.plot(10, tot_runtime['default']/10, 'ro')
+    plt.plot(5, tot_runtime['c_sc5']/num, 'ro')
+    plt.plot(20,tot_runtime['c_sc20']/num, 'ro')
+    plt.plot(10, tot_runtime['default']/num, 'ro')
     plt.axis([0, 25.0, 0.0, 2.5])
     plt.ylabel("runtime")
     plt.xlabel("sc")
@@ -424,7 +428,9 @@ def main():
         tot_runtime[data_folder] = 0.0
 
 
-    for num in range(10):
+    for num in range(100):
+        print('num', num)
+
         if not os.path.exists('./evaluations/{}'.format(str(num))):
             os.makedirs('./evaluations/{}'.format(str(num)))
 
@@ -495,9 +501,9 @@ def main():
    
 
     # evaluate average values
-    evaluate_avg_relative_entropy()
-    evaluate_avg_overlaps()
-    evaluate_avg_runtime()
+    evaluate_avg_relative_entropy(100)
+    evaluate_avg_overlaps(100)
+    evaluate_avg_runtime(100)
 
 if __name__ == '__main__':
     start_time = time.time()

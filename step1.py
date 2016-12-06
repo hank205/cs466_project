@@ -91,7 +91,7 @@ def main():
         os.makedirs('./data_sets/{}'.format(data_folder))
 
     # generate 10 data sets for input configuration
-    for num in range(10):
+    for num in range(100):
         sequence_list = generate_random_sequences()
         pwm = generate_motif()
         plant_site_list = plant_binding_sites(sequence_list, pwm)

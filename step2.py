@@ -107,7 +107,7 @@ def main():
     if not os.path.exists('outcomes/{}'.format(data_folder)):
         os.makedirs('outcomes/{}'.format(data_folder))
 
-    for num in range(10):
+    for num in range(100):
         run_start = time.time()
 
         # set up background matrix
