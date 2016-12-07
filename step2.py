@@ -3,6 +3,7 @@
 # Step 2
 
 import numpy as np
+import operator
 import sys
 import time
 import os
@@ -59,43 +60,65 @@ def string_score(subsequence, pwm):
         base_prob = pwm[base_i][base_list.index(base)]
         if base_prob == 0:
             continue
-        score_total += np.log(pwm[base_i][base_list.index(base)] / 0.25)
+        score_total += np.log(base_prob / 0.25)
     return score_total
 
 def find_best_index(sequence, pwm):
     '''
     Given a sequence and a PWM, find the index where the PWM best matches the 
-    sequence.
+    sequence. Probabilistically choose the index.
     '''
-    best_index, best_index_score = -1, -float('inf')
+    index_prob_list = []
     # Loop over possible starting indices.
     for x_i in range(len(sequence) - ml + 1):
         possible_motif = sequence[x_i:x_i+ml]
         current_score = string_score(possible_motif, pwm)
-        if current_score > best_index_score:
-            best_index_score = current_score
-            best_index = x_i
+        index_prob_list += [current_score]
+    # assert len(index_prob_list) == ml
+    # Normalize the score list with softmax.
+    exp_list = np.exp(index_prob_list)
+    index_prob_list = exp_list / np.sum(exp_list)
+    best_index = np.random.choice(len(index_prob_list), p=index_prob_list)
     return best_index
+
+def compute_information_content(pwm):
+    '''
+    Given a profile weight matrix, compute its information content.
+    '''
+    information_content = 0.0
+    for row in pwm:
+        for base_prob in row:
+            if base_prob == 0:
+                continue
+            information_content += base_prob * np.log(base_prob / 0.25)
+    return information_content
 
 def gibbs():
     '''
     Performs Gibbs sampling on the list of sequences, given a motif length.
     '''
     curr_position_list = initialize_random_positions()
-
-    # Repeat until position_list doesn't change.
-    prev_position_list = []
-
-    while curr_position_list != prev_position_list:
-        prev_position_list = curr_position_list[:]
+    pos_info_dct = {}
+    # Repeat a hundred times. Get the position list with the best information
+    # content.
+    for i in range(100):
         for sequence_i, position in enumerate(curr_position_list):
             # Build a profile Q using sequences in curr_position_list, except i.
             pwm = build_profile_matrix(curr_position_list, sequence_i)
             # Find where the profile matches best in sequence_i.
             curr_position_list[sequence_i] = find_best_index(sequence_list[
                 sequence_i], pwm)
-    return curr_position_list
-  
+
+        key = tuple(curr_position_list[:])
+        if key in pos_info_dct:
+            continue
+        s = build_profile_matrix(curr_position_list, 'dummy_arg')
+        pos_info_dct[key] = compute_information_content(s)
+    pos_info_dct = sorted(pos_info_dct.items(), key=operator.itemgetter(1),
+        reverse=True)
+
+    return pos_info_dct[0][0]
+
 def main():
     if len(sys.argv) != 2:
         print('Usage: python %s data_folder' % (sys.argv[0]))
@@ -103,11 +126,11 @@ def main():
     global data_folder, sequence_list, ml
     data_folder = sys.argv[1]
   
-
     if not os.path.exists('outcomes/{}'.format(data_folder)):
         os.makedirs('outcomes/{}'.format(data_folder))
 
-    for num in range(100):
+    for num in range(10):
+        print num
         run_start = time.time()
 
         # set up background matrix
@@ -118,20 +141,8 @@ def main():
         sequence_list = read_sequence_file(num)
         curr_position_list = gibbs()
 
-
         # Make PWM predictedmotif out of the curr_position_list
-        predictedmotif = [[0.0, 0.0, 0.0, 0.0] for x in range(ml)]
-        for i in range(len(curr_position_list)):        
-            start_pos = curr_position_list[i]
-            motif = sequence_list[i][start_pos:start_pos+ml]
-            for j in range(ml):
-                char = motif[j]
-                predictedmotif[j][base_list.index(char)] += 1
-        
-        # Normalize predictedmotif
-        sc = len(sequence_list)
-        for i in range(ml):
-            predictedmotif[i] = map(lambda x: x/sc, predictedmotif[i])
+        predictedmotif = build_profile_matrix(curr_position_list, 'dummy_arg')
 
         # Generate files
         if not os.path.exists('outcomes/{}/{}'.format(data_folder, str(num))):
@@ -153,7 +164,6 @@ def main():
         runtime = (time.time() - run_start)
         with open('outcomes/{}/{}/runtime.txt'.format(data_folder, str(num)), 'w') as f:
             f.write(str(runtime))
-
 
 if __name__ == '__main__':
     start_time = time.time()

@@ -36,62 +36,72 @@ def num_overlaps(sites, predictedsites, motif_lengths, key, num):
     predictedsite = predictedsites[key]
     ml = motif_lengths[key]
 
-    site.sort()
-    predictedsite.sort()
+    site = sites[key]
+    predictedsite = predictedsites[key]
+    motif_length = motif_lengths[key]
 
-    # print 'site', len(site), site
-    # print 'predictedsite', len(predictedsite), predictedsite
-    # print()
+    for i, j in zip(site, predictedsite):
+        if i <= j and j < i + motif_length:
+            overlap_sites+=1
+        elif j <= i and i < j + motif_length:
+            overlap_sites+=1
 
-    pred_idx = 0
-    site_idx = 0
+    # site.sort()
+    # predictedsite.sort()
 
-    while pred_idx < len(predictedsite) or site_idx < len(site):
-        # print 'pred_idx',pred_idx, 'site_idx',site_idx
+    # # print 'site', len(site), site
+    # # print 'predictedsite', len(predictedsite), predictedsite
+    # # print()
 
-        if predictedsite[pred_idx]+ml > site[site_idx] and predictedsite[pred_idx] <= site[site_idx]:
-            overlap_sites += 1
-            # print 'predictedsite',predictedsite[pred_idx], 'site',site[site_idx]
+    # pred_idx = 0
+    # site_idx = 0
+
+    # while pred_idx < len(predictedsite) or site_idx < len(site):
+    #     # print 'pred_idx',pred_idx, 'site_idx',site_idx
+
+    #     if predictedsite[pred_idx]+ml > site[site_idx] and predictedsite[pred_idx] <= site[site_idx]:
+    #         overlap_sites += 1
+    #         # print 'predictedsite',predictedsite[pred_idx], 'site',site[site_idx]
             
-        elif site[site_idx]+ml > predictedsite[pred_idx] and site[site_idx] <= predictedsite[pred_idx]:
-            overlap_sites += 1
-            # print 'predictedsite',predictedsite[pred_idx], 'site',site[site_idx]
+    #     elif site[site_idx]+ml > predictedsite[pred_idx] and site[site_idx] <= predictedsite[pred_idx]:
+    #         overlap_sites += 1
+    #         # print 'predictedsite',predictedsite[pred_idx], 'site',site[site_idx]
 
-        # at least one reaches last site
-        if pred_idx == len(predictedsite)-1 and site_idx < len(site)-1:
-            site_idx += 1
-        elif pred_idx < len(predictedsite)-1 and site_idx == len(site)-1:
-            pred_idx += 1
-        elif pred_idx == len(predictedsite)-1 and site_idx == len(site)-1:
-            break
+    #     # at least one reaches last site
+    #     if pred_idx == len(predictedsite)-1 and site_idx < len(site)-1:
+    #         site_idx += 1
+    #     elif pred_idx < len(predictedsite)-1 and site_idx == len(site)-1:
+    #         pred_idx += 1
+    #     elif pred_idx == len(predictedsite)-1 and site_idx == len(site)-1:
+    #         break
 
-        # none reaches last site
-        else:
-            if predictedsite[pred_idx] < site[site_idx]:
-                pred_idx += 1
-            elif predictedsite[pred_idx] > site[site_idx]:
-                site_idx += 1
-            else:
-                if predictedsite[pred_idx+1] < site[site_idx+1]:
-                    pred_idx += 1
-                else:
-                    site_idx += 1    
+    #     # none reaches last site
+    #     else:
+    #         if predictedsite[pred_idx] < site[site_idx]:
+    #             pred_idx += 1
+    #         elif predictedsite[pred_idx] > site[site_idx]:
+    #             site_idx += 1
+    #         else:
+    #             if predictedsite[pred_idx+1] < site[site_idx+1]:
+    #                 pred_idx += 1
+    #             else:
+    #                 site_idx += 1    
       
-    # generate graph
-    plt.figure()
-    for x in site:
-        plt.hlines(0.5, x, x+ml, 'r', alpha = 0.7, lw=4)
-    for x in predictedsite:
-        plt.hlines(0.48, x, x+ml, 'b', alpha = 0.7, lw=4)    
+    # # generate graph
+    # plt.figure()
+    # for x in site:
+    #     plt.hlines(0.5, x, x+ml, 'r', alpha = 0.7, lw=4)
+    # for x in predictedsite:
+    #     plt.hlines(0.48, x, x+ml, 'b', alpha = 0.7, lw=4)    
     
-    plt.xlim(0, 600)
-    # plt.xlim(180, 230)
-    plt.ylim(0, 1)
-    # plt.show()
+    # plt.xlim(0, 600)
+    # # plt.xlim(180, 230)
+    # plt.ylim(0, 1)
+    # # plt.show()
     
-    if not os.path.exists('./evaluations/{}/overlaps'.format(str(num))):
-        os.makedirs('./evaluations/{}/overlaps'.format(str(num)))
-    plt.savefig('./evaluations/{}/overlaps/{}_overlap.png'.format(str(num), key), bbox_inches='tight')
+    # if not os.path.exists('./evaluations/{}/overlaps'.format(str(num))):
+    #     os.makedirs('./evaluations/{}/overlaps'.format(str(num)))
+    # plt.savefig('./evaluations/{}/overlaps/{}_overlap.png'.format(str(num), key), bbox_inches='tight')
 
     return overlap_sites
 
@@ -203,30 +213,40 @@ def evaluate_avg_relative_entropy(num):
     '''
     global tot_rel_entropy
 
+    fig = plt.figure()
     plt.plot(1, tot_rel_entropy['a_icpc1']/num, 'ro')
     plt.plot(1.5,tot_rel_entropy['a_icpc1.5']/num, 'ro')
     plt.plot(2, tot_rel_entropy['default']/num, 'ro')
-    plt.axis([0, 3.0, 0.0, 100.0])
+    ax = fig.add_subplot(111)
+    for i,j in zip([1, 1.5, 2],[tot_rel_entropy['a_icpc1']/num,tot_rel_entropy['a_icpc1.5']/num,tot_rel_entropy['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))    
+    plt.axis([0, 3.0, 0.0, max(tot_rel_entropy['a_icpc1']/num, tot_rel_entropy['a_icpc1.5']/num, tot_rel_entropy['default']/num)+20.0])
     plt.ylabel("relative entropy")
     plt.xlabel("icpc")
     plt.title('average relative entropy vs icpc')
     plt.savefig('./evaluations/avg_relative_entropy_vs_icpc.png', bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(6, tot_rel_entropy['b_ml6']/num, 'ro')
     plt.plot(7,tot_rel_entropy['b_ml7']/num, 'ro')
     plt.plot(8, tot_rel_entropy['default']/num, 'ro')
-    plt.axis([0, 15.0, 0.0, 100.0])
+    ax = fig.add_subplot(111)
+    for i,j in zip([6, 7, 8],[tot_rel_entropy['b_ml6']/num,tot_rel_entropy['b_ml7']/num,tot_rel_entropy['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 15.0, 0.0, max(tot_rel_entropy['b_ml6']/num, tot_rel_entropy['b_ml7']/num, tot_rel_entropy['default']/num)+20.0])
     plt.ylabel("relative entropy")
     plt.xlabel("ml")
     plt.title('average relative entropy vs ml')
     plt.savefig('./evaluations/avg_relative_entropy_vs_ml.png', bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(5, tot_rel_entropy['c_sc5']/num, 'ro')
     plt.plot(20,tot_rel_entropy['c_sc20']/num, 'ro')
     plt.plot(10, tot_rel_entropy['default']/num, 'ro')
-    plt.axis([0, 25.0, 0.0, 150.0])
+    ax = fig.add_subplot(111)
+    for i,j in zip([5, 20, 10],[tot_rel_entropy['c_sc5']/num,tot_rel_entropy['c_sc20']/num,tot_rel_entropy['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 25.0, 0.0, max(tot_rel_entropy['c_sc5']/num, tot_rel_entropy['c_sc20']/num, tot_rel_entropy['default']/num)+20.0])
     plt.ylabel("relative entropy")
     plt.xlabel("sc")
     plt.title('average relative entropy vs sc')
@@ -293,31 +313,40 @@ def evaluate_avg_overlaps(num):
     '''
     global tot_overlaps
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(1, tot_overlaps['a_icpc1']/num, 'ro')
     plt.plot(1.5,tot_overlaps['a_icpc1.5']/num, 'ro')
     plt.plot(2, tot_overlaps['default']/num, 'ro')
-    plt.axis([0, 3.0, 0.0, 15.0])
+    ax = fig.add_subplot(111)
+    for i,j in zip([1, 1.5, 2],[tot_overlaps['a_icpc1']/num,tot_overlaps['a_icpc1.5']/num,tot_overlaps['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 3.0, 0.0, max(tot_overlaps['a_icpc1']/num, tot_overlaps['a_icpc1.5']/num, tot_overlaps['default']/num)+3.0])
     plt.ylabel("overlaps")
     plt.xlabel("icpc")
     plt.title('average overlaps vs icpc')
     plt.savefig('./evaluations/avg_overlaps_vs_icpc.png', bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(6, tot_overlaps['b_ml6']/num, 'ro')
     plt.plot(7,tot_overlaps['b_ml7']/num, 'ro')
     plt.plot(8, tot_overlaps['default']/num, 'ro')
-    plt.axis([0, 15.0, 0.0, 15.0])
+    ax = fig.add_subplot(111)
+    for i,j in zip([6, 7, 8],[tot_overlaps['b_ml6']/num,tot_overlaps['b_ml7']/num,tot_overlaps['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 15.0, 0.0, max(tot_overlaps['b_ml6']/num, tot_overlaps['b_ml7']/num, tot_overlaps['default']/num)+3.0])
     plt.ylabel("overlaps")
     plt.xlabel("ml")
     plt.title('average overlaps vs ml')
     plt.savefig('./evaluations/avg_overlaps_vs_ml.png', bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(5, tot_overlaps['c_sc5']/num, 'ro')
     plt.plot(20,tot_overlaps['c_sc20']/num, 'ro')
     plt.plot(10, tot_overlaps['default']/num, 'ro')
-    plt.axis([0, 25.0, 0.0, 25.0])
+    ax = fig.add_subplot(111)
+    for i,j in zip([5, 20, 10],[tot_overlaps['c_sc5']/num,tot_overlaps['c_sc20']/num,tot_overlaps['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 25.0, 0.0, max(tot_overlaps['c_sc5']/num, tot_overlaps['c_sc20']/num, tot_overlaps['default']/num)+3.0])
     plt.ylabel("overlaps")
     plt.xlabel("sc")
     plt.title('average overlaps vs sc')
@@ -333,34 +362,43 @@ def evaluate_runtime(runtime, num):
     for data_folder in dirs:
         tot_runtime[data_folder] += runtime[data_folder]
 
-    plt.figure()
-    plt.plot(1, runtime['a_icpc1'], 'ro')
+    fig = plt.figure()
+    plt.plot(1, runtime['a_icpc1'], 'ro')        
     plt.plot(1.5,runtime['a_icpc1.5'], 'ro')
     plt.plot(2, runtime['default'], 'ro')
-    plt.axis([0, 3.0, 0.0, 1.0])
-    plt.ylabel("runtime")
+    # ax = fig.add_subplot(111)
+    # for i,j in zip([1, 1.5, 2],[runtime['a_icpc1'],runtime['a_icpc1.5'],runtime['default']]):
+    #     ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 3.0, 0.0, max(runtime['a_icpc1'], runtime['a_icpc1.5'], runtime['default'])+1.0])
+    plt.ylabel("running time (secs)")
     plt.xlabel("icpc")
-    plt.title('runtime vs icpc')
+    plt.title('running time vs icpc')
     plt.savefig('./evaluations/{}/runtime_vs_icpc.png'.format(str(num)), bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(6, runtime['b_ml6'], 'ro')
     plt.plot(7,runtime['b_ml7'], 'ro')
     plt.plot(8, runtime['default'], 'ro')
-    plt.axis([0, 15.0, 0.0, 1.0])
-    plt.ylabel("runtime")
+    # ax = fig.add_subplot(111)
+    # for i,j in zip([6, 7, 8],[runtime['b_ml6'],runtime['b_ml7'],runtime['default']]):
+    #     ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 15.0, 0.0, max(runtime['b_ml6'], runtime['b_ml7'], runtime['default'])+1.0])
+    plt.ylabel("running time (secs)")
     plt.xlabel("ml")
-    plt.title('runtime vs ml')
+    plt.title('running time vs ml')
     plt.savefig('./evaluations/{}/runtime_vs_ml.png'.format(str(num)), bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(5, runtime['c_sc5'], 'ro')
     plt.plot(20,runtime['c_sc20'], 'ro')
     plt.plot(10, runtime['default'], 'ro')
-    plt.axis([0, 25.0, 0.0, 2.5])
-    plt.ylabel("runtime")
+    # ax = fig.add_subplot(111)
+    # for i,j in zip([5, 20, 10],[runtime['c_sc5'],runtime['c_sc20'],runtime['default']]):
+    #     ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 25.0, 0.0, max(runtime['c_sc5'], runtime['c_sc20'], runtime['default'])+1.0])
+    plt.ylabel("running time (secs)")
     plt.xlabel("sc")
-    plt.title('runtime vs sc')
+    plt.title('running time vs sc')
     plt.savefig('./evaluations/{}/runtime_vs_sc.png'.format(str(num)), bbox_inches='tight')
     plt.close('all')
 
@@ -375,34 +413,43 @@ def evaluate_avg_runtime(num):
     '''
     global tot_runtime
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(1, tot_runtime['a_icpc1']/num, 'ro')
     plt.plot(1.5,tot_runtime['a_icpc1.5']/num, 'ro')
     plt.plot(2, tot_runtime['default']/num, 'ro')
-    plt.axis([0, 3.0, 0.0, 1.0])
-    plt.ylabel("runtime")
+    ax = fig.add_subplot(111)
+    for i,j in zip([1, 1.5, 2],[tot_runtime['a_icpc1']/num,tot_runtime['a_icpc1.5']/num,tot_runtime['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 3.0, 0.0, max(tot_runtime['a_icpc1']/num, tot_runtime['a_icpc1.5']/num, tot_runtime['default']/num)+1.0])
+    plt.ylabel("running time (secs)")
     plt.xlabel("icpc")
-    plt.title('average runtime vs icpc')
+    plt.title('average running time vs icpc')
     plt.savefig('./evaluations/avg_runtime_vs_icpc.png', bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(6, tot_runtime['b_ml6']/num, 'ro')
     plt.plot(7,tot_runtime['b_ml7']/num, 'ro')
     plt.plot(8, tot_runtime['default']/num, 'ro')
-    plt.axis([0, 15.0, 0.0, 1.0])
-    plt.ylabel("runtime")
+    ax = fig.add_subplot(111)
+    for i,j in zip([6, 7, 8],[tot_runtime['b_ml6']/num,tot_runtime['b_ml7']/num,tot_runtime['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 15.0, 0.0, max(tot_runtime['b_ml6']/num, tot_runtime['b_ml7']/num, tot_runtime['default']/num)+1.0])
+    plt.ylabel("running time (secs)")
     plt.xlabel("ml")
-    plt.title('average runtime vs ml')
+    plt.title('average running time vs ml')
     plt.savefig('./evaluations/avg_runtime_vs_ml.png', bbox_inches='tight')
 
-    plt.figure()
+    fig = plt.figure()
     plt.plot(5, tot_runtime['c_sc5']/num, 'ro')
     plt.plot(20,tot_runtime['c_sc20']/num, 'ro')
     plt.plot(10, tot_runtime['default']/num, 'ro')
-    plt.axis([0, 25.0, 0.0, 2.5])
-    plt.ylabel("runtime")
+    ax = fig.add_subplot(111)
+    for i,j in zip([5, 20, 10],[tot_runtime['c_sc5']/num,tot_runtime['c_sc20']/num,tot_runtime['default']/num]):
+        ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
+    plt.axis([0, 25.0, 0.0, max(tot_runtime['c_sc5']/num, tot_runtime['c_sc20']/num, tot_runtime['default']/num)+1.0])
+    plt.ylabel("running time (secs)")
     plt.xlabel("sc")
-    plt.title('average runtime vs sc')
+    plt.title('average running time vs sc')
     plt.savefig('./evaluations/avg_runtime_vs_sc.png', bbox_inches='tight')
     plt.close('all')
 
@@ -427,8 +474,8 @@ def main():
     for data_folder in dirs:
         tot_runtime[data_folder] = 0.0
 
-
-    for num in range(100):
+    trials = 10
+    for num in range(trials):
         print('num', num)
 
         if not os.path.exists('./evaluations/{}'.format(str(num))):
@@ -501,9 +548,9 @@ def main():
    
 
     # evaluate average values
-    evaluate_avg_relative_entropy(100)
-    evaluate_avg_overlaps(100)
-    evaluate_avg_runtime(100)
+    evaluate_avg_relative_entropy(trials)
+    evaluate_avg_overlaps(trials)
+    evaluate_avg_runtime(trials)
 
 if __name__ == '__main__':
     start_time = time.time()
