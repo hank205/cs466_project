@@ -97,23 +97,27 @@ def gibbs():
     '''
     Performs Gibbs sampling on the list of sequences, given a motif length.
     '''
-    curr_position_list = initialize_random_positions()
     pos_info_dct = {}
-    # Repeat a hundred times. Get the position list with the best information
-    # content.
-    for i in range(100):
-        for sequence_i, position in enumerate(curr_position_list):
-            # Build a profile Q using sequences in curr_position_list, except i.
-            pwm = build_profile_matrix(curr_position_list, sequence_i)
-            # Find where the profile matches best in sequence_i.
-            curr_position_list[sequence_i] = find_best_index(sequence_list[
-                sequence_i], pwm)
 
-        key = tuple(curr_position_list[:])
-        if key in pos_info_dct:
-            continue
-        s = build_profile_matrix(curr_position_list, 'dummy_arg')
-        pos_info_dct[key] = compute_information_content(s)
+    for i in range(100):
+        curr_position_list = initialize_random_positions()
+        # Repeat a hundred times. Get the position list with the best
+        # information content.
+        for i in range(1000):
+            for sequence_i, position in enumerate(curr_position_list):
+                # Build a profile Q using sequences in curr_position_list,
+                # except i.
+                pwm = build_profile_matrix(curr_position_list, sequence_i)
+                # Find where the profile matches best in sequence_i.
+                curr_position_list[sequence_i] = find_best_index(sequence_list[
+                    sequence_i], pwm)
+
+            key = tuple(curr_position_list[:])
+            if key in pos_info_dct:
+                continue
+            s = build_profile_matrix(curr_position_list, 'dummy_arg')
+            pos_info_dct[key] = compute_information_content(s)
+
     pos_info_dct = sorted(pos_info_dct.items(), key=operator.itemgetter(1),
         reverse=True)
 
