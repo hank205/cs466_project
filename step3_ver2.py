@@ -216,7 +216,7 @@ def evaluate_avg_relative_entropy(num):
     ax = fig.add_subplot(111)
     for i,j in zip([1, 1.5, 2],[tot_rel_entropy['a_icpc1']/num,tot_rel_entropy['a_icpc1.5']/num,tot_rel_entropy['default']/num]):
         ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))    
-    plt.axis([0, 3.0, 0.0, max(tot_rel_entropy['a_icpc1']/num, tot_rel_entropy['a_icpc1.5']/num, tot_rel_entropy['default']/num)+20.0])
+    plt.axis([0, 3.0, 0.0, max(tot_rel_entropy['a_icpc1']/num, tot_rel_entropy['a_icpc1.5']/num, tot_rel_entropy['default']/num)+10.0])
     plt.ylabel("relative entropy")
     plt.xlabel("icpc")
     plt.title('average relative entropy vs icpc')
@@ -229,7 +229,7 @@ def evaluate_avg_relative_entropy(num):
     ax = fig.add_subplot(111)
     for i,j in zip([6, 7, 8],[tot_rel_entropy['b_ml6']/num,tot_rel_entropy['b_ml7']/num,tot_rel_entropy['default']/num]):
         ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
-    plt.axis([0, 15.0, 0.0, max(tot_rel_entropy['b_ml6']/num, tot_rel_entropy['b_ml7']/num, tot_rel_entropy['default']/num)+20.0])
+    plt.axis([0, 15.0, 0.0, max(tot_rel_entropy['b_ml6']/num, tot_rel_entropy['b_ml7']/num, tot_rel_entropy['default']/num)+10.0])
     plt.ylabel("relative entropy")
     plt.xlabel("ml")
     plt.title('average relative entropy vs ml')
@@ -242,7 +242,7 @@ def evaluate_avg_relative_entropy(num):
     ax = fig.add_subplot(111)
     for i,j in zip([5, 20, 10],[tot_rel_entropy['c_sc5']/num,tot_rel_entropy['c_sc20']/num,tot_rel_entropy['default']/num]):
         ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
-    plt.axis([0, 25.0, 0.0, max(tot_rel_entropy['c_sc5']/num, tot_rel_entropy['c_sc20']/num, tot_rel_entropy['default']/num)+20.0])
+    plt.axis([0, 25.0, 0.0, max(tot_rel_entropy['c_sc5']/num, tot_rel_entropy['c_sc20']/num, tot_rel_entropy['default']/num)+10.0])
     plt.ylabel("relative entropy")
     plt.xlabel("sc")
     plt.title('average relative entropy vs sc')
@@ -416,7 +416,7 @@ def evaluate_avg_runtime(num):
     ax = fig.add_subplot(111)
     for i,j in zip([1, 1.5, 2],[tot_runtime['a_icpc1']/num,tot_runtime['a_icpc1.5']/num,tot_runtime['default']/num]):
         ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
-    plt.axis([0, 3.0, 0.0, max(tot_runtime['a_icpc1']/num, tot_runtime['a_icpc1.5']/num, tot_runtime['default']/num)+1.0])
+    plt.axis([0, 3.0, 0.0, max(tot_runtime['a_icpc1']/num, tot_runtime['a_icpc1.5']/num, tot_runtime['default']/num)+2000.0])
     plt.ylabel("running time (secs)")
     plt.xlabel("icpc")
     plt.title('average running time vs icpc')
@@ -429,7 +429,7 @@ def evaluate_avg_runtime(num):
     ax = fig.add_subplot(111)
     for i,j in zip([6, 7, 8],[tot_runtime['b_ml6']/num,tot_runtime['b_ml7']/num,tot_runtime['default']/num]):
         ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
-    plt.axis([0, 15.0, 0.0, max(tot_runtime['b_ml6']/num, tot_runtime['b_ml7']/num, tot_runtime['default']/num)+1.0])
+    plt.axis([0, 15.0, 0.0, max(tot_runtime['b_ml6']/num, tot_runtime['b_ml7']/num, tot_runtime['default']/num)+2000.0])
     plt.ylabel("running time (secs)")
     plt.xlabel("ml")
     plt.title('average running time vs ml')
@@ -442,7 +442,7 @@ def evaluate_avg_runtime(num):
     ax = fig.add_subplot(111)
     for i,j in zip([5, 20, 10],[tot_runtime['c_sc5']/num,tot_runtime['c_sc20']/num,tot_runtime['default']/num]):
         ax.annotate(str("{0:.2f}".format(j)),xy=(i,j+0.02))
-    plt.axis([0, 25.0, 0.0, max(tot_runtime['c_sc5']/num, tot_runtime['c_sc20']/num, tot_runtime['default']/num)+1.0])
+    plt.axis([0, 25.0, 0.0, max(tot_runtime['c_sc5']/num, tot_runtime['c_sc20']/num, tot_runtime['default']/num)+2000.0])
     plt.ylabel("running time (secs)")
     plt.xlabel("sc")
     plt.title('average running time vs sc')

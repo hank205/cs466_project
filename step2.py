@@ -101,7 +101,7 @@ def gibbs():
     pos_info_dct = {}
     # Repeat a hundred times. Get the position list with the best information
     # content.
-    for i in range(100):
+    for i in range(10):
         for sequence_i, position in enumerate(curr_position_list):
             # Build a profile Q using sequences in curr_position_list, except i.
             pwm = build_profile_matrix(curr_position_list, sequence_i)
